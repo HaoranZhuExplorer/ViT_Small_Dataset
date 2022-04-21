@@ -6,3 +6,6 @@
 
 `python train_cifar10.py --net res18 --dataset cifar10` # resnet18
 
+
+# Reference
+code is based on <https://github.com/kentaroy47/vision-transformers-cifar10>
