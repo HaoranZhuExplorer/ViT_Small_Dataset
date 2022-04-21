@@ -80,7 +80,7 @@ if args.net=="vit_timm":
     size = 384
 else:
     size = imsize
-transform_train = transforms.Compose([
+transform_train_cifar10 = transforms.Compose([
     transforms.RandomCrop(32, padding=4),
     transforms.Resize(size),
     transforms.RandomHorizontalFlip(),
@@ -88,38 +88,64 @@ transform_train = transforms.Compose([
     transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
 ])
 
-transform_test = transforms.Compose([
+transform_test_cifar10 = transforms.Compose([
     transforms.Resize(size),
     transforms.ToTensor(),
     transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
 ])
 
-# Add RandAugment with N, M(hyperparameter)
-if args.aug:  
-    N = 2; M = 14;
-    transform_train.transforms.insert(0, RandAugment(N, M))
+
+transform_train_cifar100 = transforms.Compose([
+    transforms.RandomCrop(32, padding=4),
+    transforms.Resize(size),
+    transforms.RandomHorizontalFlip(),
+    transforms.ToTensor(),
+    transforms.Normalize((0.5071, 0.4867, 0.4408), (0.2675, 0.2565, 0.2761)),
+])
+
+transform_test_cifar100 = transforms.Compose([
+    transforms.Resize(size),
+    transforms.ToTensor(),
+    transforms.Normalize((0.5071, 0.4867, 0.4408), (0.2675, 0.2565, 0.2761)),
+])
+
+transform_train_svhn = transforms.Compose([
+    transforms.RandomCrop(32, padding=4),
+    transforms.Resize(size),
+    transforms.RandomHorizontalFlip(),
+    transforms.ToTensor(),
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+])
+
+transform_test_svhn = transforms.Compose([
+    transforms.Resize(size),
+    transforms.ToTensor(),
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+])
+
+
 
 if args.dataset == 'cifar10':
-    trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
+    trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train_cifar10)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=bs, shuffle=True, num_workers=8)
 
-    testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
+    testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test_cifar10)
     testloader = torch.utils.data.DataLoader(testset, batch_size=100, shuffle=False, num_workers=8)
     num_classes_for_training = 10
     
 elif args.dataset == 'cifar100':
-    trainset = torchvision.datasets.CIFAR100(root='./data', train=True, download=True, transform=transform_train)
+    trainset = torchvision.datasets.CIFAR100(root='./data', train=True, download=True, transform=transform_train_cifar100)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=bs, shuffle=True, num_workers=8)
 
-    testset = torchvision.datasets.CIFAR100(root='./data', train=False, download=True, transform=transform_test)
+    testset = torchvision.datasets.CIFAR100(root='./data', train=False, download=True, transform=transform_test_cifar100)
     testloader = torch.utils.data.DataLoader(testset, batch_size=100, shuffle=False, num_workers=8)
     num_classes_for_training = 100
     
 elif args.dataset == 'svhn':
-    trainset = torchvision.datasets.SVHN(root='./data', split='train', download=True, transform=transform_train)
+    trainset = torchvision.datasets.SVHN(root='./data', split='train', download=True, transform=transform_train_svhn)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=bs, shuffle=True, num_workers=8)
 
-    testset = torchvision.datasets.SVHN(root='./data', split='test', download=True, transform=transform_test)
+    testset = torchvision.datasets.SVHN(root='./data', split='test', download=True, transform=transform_test_svhn)
     testloader = torch.utils.data.DataLoader(testset, batch_size=100, shuffle=False, num_workers=8)
     num_classes_for_training = 10
     
